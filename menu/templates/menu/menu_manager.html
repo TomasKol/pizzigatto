@@ -1,0 +1,33 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+  <div class="" id="manager-navbar">
+    <ul class="d-flex flex-wrap navbar-nav">
+      <li class="navbar-item mr-2">
+        <a href="{% url 'menu:manage_meal_types' %}"><p class="nav-link">meal types</p></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'menu:get_editable_toppings' 0 %}">
+          toppings
+        </a>
+      </li>
+      {% for type in types %}
+      <li class="nav-item" id="type-{{ type.id }}-nav">
+        <a class="nav-link" href="{% url 'menu:get_editable_menu_items' type_id=type.id err=0 %}">
+          {{ type.name }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</nav>
+
+  {% block menu_manager %}
+  {% endblock %}
+
+{% endblock %}

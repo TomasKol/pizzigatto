@@ -1,0 +1,28 @@
+{% extends 'index.html' %}
+
+{% block body %}
+<h1 class="header-centered">pizzigatto</h1>
+<form class="site-form" action="{% url 'accounts:login' %}" method="POST">
+  
+  {% csrf_token %}
+  {{ form.username }}
+  {{ form.password }}
+  {% if request.GET.next %} 
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
+  {% endif %}
+  <button type="submit" class="btn btn-outline-info btn-block">Log in</button>
+  <p>No account yet? <a href="{% url 'accounts:signup' %}">Sign up</a>.</p>
+
+  {% if form.errors %}
+  {% for error in form.errors %}
+  <div class="alert alert-danger">
+    {{ form.errors.username }}
+    {{ form.errors.password }}
+    {{ form.non_field_errors }}
+  </div>
+  {% endfor %}
+  {% endif %}
+
+</form>
+
+{% endblock %}

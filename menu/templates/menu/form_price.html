@@ -1,0 +1,22 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<form class="form-prices" action="{% url 'menu:edit_global_prices' %}" method="POST">
+  <h1 class="header-centered">global prices</h1>
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-info">save changes</button>
+  {% for field in form %}
+  <hr>
+  <div class="row d-flex justify-content-between">
+    <div class="col-auto">{{ field.label_tag }}</div>
+    <div class="col-4">{{ field }}</div>
+  </div>
+  {% endfor %}
+  <hr>
+
+  <button type="submit" class="btn btn-outline-info">save changes</button>
+</form>
+{% endblock %}

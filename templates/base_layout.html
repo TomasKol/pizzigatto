@@ -1,0 +1,67 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block body %}
+  <!-- header navbar -->
+  {% if user.is_staff %}
+  <nav class="navbar sticky-top navbar-expand-lg main">
+  {% else %}
+  <nav class="navbar sticky-top navbar-expand-md main">
+  {% endif %}
+
+    <a class="navbar-brand" href="/">
+      <img src="{% static 'pizzigatto.png' %}" alt="pizzigatto logo">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon">
+        <i data-feather="menu"></i>
+      </span>
+    </button>
+
+    {% if user.is_staff %}
+    <div class="collapse navbar-collapse justify-content-between" id="navbar">
+    {% else %}
+    <div class="collapse navbar-collapse justify-content-end" id="navbar">
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      {% if user.is_staff %}
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'orders:view_all_orders' %}">manage orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'menu:menu_manager' %}">menu manager</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'menu:edit_global_prices' %}">global prices</a>
+        </li>
+      </ul>
+      {% endif %}
+
+      <ul class="navbar-nav">
+        
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'orders:viewcart' %}">my cart</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'orders:view_my_orders' %}">my orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:logout' %}">log out</a>
+        </li>
+      </ul>
+        
+    {% endif %}
+    </div>
+
+  </nav>
+  
+  <div id="all">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+{% endblock %}
+

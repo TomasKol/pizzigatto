@@ -1,0 +1,64 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>my orders</h1>
+
+  {% for order in orders %}
+  <div class="row d-flex justify-content-start pt-3 order">
+
+    <div class="col-1">
+      <div class="d-flex flex-column align-items-center mb-3">
+        <p>#{{ order.id }}</b></p>
+        <div id="accept-order-{{ order.id }}-button-container">
+          <p>{{ order.status }}</p>
+        </div>
+      </div>
+    </div>
+
+    <ul  class="col-11">
+      {% for item in order.items.all %}
+      <li class="li-without-marker mb-1">
+        <div class="row d-flex justify-content-center align-items-center">
+          <div class="col-3 row">
+            <div class="col-3 font-weight-bold">{{ item.amount }}x</div>
+            <div class="col-9 text-capitalize text-truncate">
+              {% if not item.menu_item.meal_type.size_variant == 'single' %}
+                {{ item.size.0 }}
+              {% endif %}
+              {% if item.menu_item.meal_type.name %}
+                {{ item.menu_item.meal_type.name }}
+              {% else %}  
+                {{ item.pizza_form }}
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-7 text-capitalize text-truncate" title="{{ item.name }}">{{ item.name }}</div>
+          <div class="col-2">
+            <div class="row d-flex justify-content-between">
+              <p class="col-5 px-0 text-right">${{ item.price_unit }}</p>
+              <p class="col-5 px-0 text-right font-weight-bold">${{ item.price_total }}</p>
+            </div>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+
+      <!-- total price -->
+      <li class="li-without-marker">
+        <div class="row d-flex justify-content-end">
+          <div class="col-2 mr-3 order-total">
+            <div class="row d-flex justify-content-between">
+              <p class="col-5 px-0 text-right font-weight-bold">TOTAL: </p>
+              <p class="col-5 px-0 text-right font-weight-bold ">${{ order.price }}</p>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+  </div>    
+{% endfor %}
+
+{% endblock %}

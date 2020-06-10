@@ -1,0 +1,281 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block content %}
+<!-- meals navbar -->
+<nav class="navbar navbar-expand-md py-0">
+
+  {% if mealTypes %}
+  <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="menu-buttons-navbar" data-target="#menu-buttons-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icom">
+      <i data-feather="menu"></i>
+    </span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="menu-buttons-navbar">
+    <ul class="navbar-nav">
+      <li id="button-pizza" class="menu-button" data-id="0">pizza</li>
+      
+      {% for type in mealTypes %}
+      <li id="button-{{type}}" class="menu-button" data-id="{{ type.id }}">{{type}}</li>
+      {% endfor %}
+
+    </ul>
+  </div>
+
+
+
+  {% endif %}
+
+</nav>
+
+
+<div id="menu-container"  class="border-top">
+
+  <!-- not pizzas -->
+  
+  {% for mealType in items.items %}
+  <div id="items-container-type-{{mealType.0.id}}" class="items-container pb-5" data-id="{{ mealType.0.id }}">
+
+    <!-- header -->
+    <h3 class="mt-2 pl-3 bord-b">{{ mealType.0.name }}</h3>
+    
+    <!-- items -->
+    <div class="d-flex justify-content-around align-items-between flexed">
+      {% for item in mealType.1 %}
+      <div class="item-box">
+        <div class="item-name d-flex justify-content-center align-items-end">{{ item.name }}</div>
+        <div class="item-picture-container">
+          <img class="item-picture" src="{{ item.image.url }}" alt="picture of food">
+        </div>
+
+        <div id="item-price-lines">
+
+          <!-- single sizes -->
+          {% if item.meal_type.size_variant == 'single' %}
+          <div class="item-price d-flex justify-content-between">
+            <p class="py-1">Price:</p>
+            <p class="py-1">${{ item.price_single }}
+              <a class="add-to-cart-button item-cart-container py-1" id="add-to-cart-button-{{item.id}}" data-size="singleSize" data-id="{{item.id}}">
+                <i data-feather="shopping-cart"></i>
+              </a>
+            </p>
+            <form class="add-item-to-cart-form" id="form-item-{{item.id}}-singleSize" data-url="{% url 'orders:addtocart' %}">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="{{item.type}}">
+              <input type="hidden" name="size" value="single">
+              <input type="hidden" name="name" value="{{item.name}}">
+              <input type="hidden" name="id" value="{{item.id}}">
+            </form>
+          </div>
+
+          <!-- double sizes -->
+          {% else %}
+
+          <!-- small -->
+          <div class="item-price d-flex justify-content-between">
+            <p class="py-1">Small:</p >
+            <p class="py-1">
+              ${{ item.price_small }}
+              <a class="add-to-cart-button item-cart-container py-1" id="add-to-cart-button-{{item.id}}" data-size="small" data-id="{{item.id}}">
+                <i data-feather="shopping-cart"></i>
+              </a>
+            </p>
+            <form class="add-item-to-cart-form" id="form-item-{{item.id}}-small" data-url="{% url 'orders:addtocart' %}">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="{{item.type}}">
+              <input type="hidden" name="size" value="small">
+              <input type="hidden" name="name" value="{{item.name}}">
+              <input type="hidden" name="id" value="{{item.id}}">
+            </form>
+          </div>
+
+          <!-- small with extra cheese -->
+          {% if item.is_sub %}
+          <div class="item-price d-flex justify-content-between"> 
+            <p class="py-1">Small + extra cheese:</p >
+            <p class="py-1">
+              ${{ item.price_small }} + ${{ prices.extra_cheese }}
+              <a class="add-to-cart-button item-cart-container py-1" id="add-to-cart-button-{{item.id}}" data-cheese="-cheese" data-size="small" data-id="{{item.id}}">
+                <i data-feather="shopping-cart"></i>
+              </a>
+            </p>
+            <form class="add-item-to-cart-form" id="form-item-{{item.id}}-small-cheese" data-url="{% url 'orders:addtocart' %}">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="{{item.type}}">
+              <input type="hidden" name="size" value="small">
+              <input type="hidden" name="name" value="{{item.name}}">
+              <input type="hidden" name="id" value="{{item.id}}">
+              <input type="hidden" name="cheese" value="True">
+            </form>
+          </div>
+          {% endif %}
+
+          <!-- large -->
+          <div class="item-price d-flex justify-content-between"> 
+            <p class="py-1">Large:</p>
+            <p class="py-1">
+              ${{ item.price_large }}
+              <a class="add-to-cart-button item-cart-container py-1" id="add-to-cart-button-{{item.id}}" data-size="large" data-id="{{item.id}}">
+                <i data-feather="shopping-cart"></i>
+              </a>
+            </p>
+            <form class="add-item-to-cart-form" id="form-item-{{item.id}}-large" data-url="{% url 'orders:addtocart' %}">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="{{item.type}}">
+              <input type="hidden" name="size" value="large">
+              <input type="hidden" name="name" value="{{item.name}}">
+              <input type="hidden" name="id" value="{{item.id}}">
+            </form>
+          </div>
+
+          <!-- large with extra cheese -->
+          {% if item.is_sub %}
+          <div class="item-price d-flex justify-content-between">
+            <p class="py-1">Large + extra cheese:</p>
+            <p class="py-1">
+              ${{ item.price_large }} + ${{ prices.extra_cheese }}
+              <a class="add-to-cart-button item-cart-container py-1" id="add-to-cart-button-{{item.id}}" data-cheese="-cheese" data-size="large" data-id="{{item.id}}">
+                <i data-feather="shopping-cart"></i>
+              </a>
+            </p>
+            <form class="add-item-to-cart-form" id="form-item-{{item.id}}-large-cheese" data-url="{% url 'orders:addtocart' %}">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="{{item.type}}">
+              <input type="hidden" name="size" value="large">
+              <input type="hidden" name="name" value="{{item.name}}">
+              <input type="hidden" name="id" value="{{item.id}}">
+              <input type="hidden" name="cheese" value="True">
+            </form>
+          </div>
+          {% endif %}
+          
+          {% endif %}
+
+        </div>
+      
+      </div>
+      {% endfor %}       
+    </div>
+
+  </div>
+  {% endfor %}
+
+  <!-- pizza form -->
+  <div id="items-container-type-0" class="items-container">
+
+    <form id="form-pizza" data-url="{% url 'orders:add_pizza_to_cart' %}">
+      
+      <div  class="d-flex justify-content-center align-items-center menu-header-image" 
+            style="background-image: url('/static/making pizza.jpg');">
+        <h1>compose your pizzigatto</h1>
+      </div>
+      
+      <p class="text-center mt-2">choose form, size and up to four toppings | every pizza comes with cheese as topping zero</p>
+
+      {% csrf_token %}
+      <div class="row mb-3 py-3 ">
+        <div class="col-2">
+          <h4>form:</h4>
+          <p>
+            <input type="radio" name="form" value="neapolitan" id="neapolitan">
+            <label for="neapolitan">Neapolitan</label>
+          </p>
+          <p>
+            <input required type="radio" name="form" value="sicilian" id="sicilian">
+            <label for="sicilian">Sicilian</label>
+          </p>
+          <hr>
+          <h4>size:</h4>
+          <p>
+            <input required type="radio" name="size" value="small" id="small">
+            <label for="small">small</label>
+          </p>
+          <p>
+            <input type="radio" name="size" value="large" id="large">
+            <label for="large">large</label>
+          </p>
+        </div>
+
+        <div class="col-10">
+          <h4>toppings:</h4>
+          <div class="d-flex justify-content-between align-items-center flexed">
+            {% for topping in pizza.toppings %}
+              <div class="toppings-select mb-2">
+                <input type="checkbox" name="toppings" class="topping-checkbox" id="topping-checkbox-{{ topping.id }}" value="{{ topping.id }}">
+                <label for="topping-checkbox-{{ topping.id }}">{{ topping }}</label>
+              </div>
+            {% endfor %}
+            <div class="toppings-select mb-2">
+              <button type="button" class="btn btn-outline-info" id="pizza-form-submit" data-url="{% url 'orders:viewcart' %}">add pizza</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </form>
+
+    <div id="added-pizzas" class="mb-3"></div>
+
+    <!-- pizza prices -->
+    <table class="table text-center align-bottom"">
+      <thead class="thead">
+        <tr>
+          <th scope="col-1"></th>
+          <th scope="col-2">cheese only</th>
+          <th scope="col-2">+1 topping</th>
+          <th scope="col-2">+2 toppings</th>
+          <th scope="col-2">+3 toppings</th>
+          <th scope="col-2">+4 toppings</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="6">Neapolitan pizza (thin and round)</td>
+        </tr>
+        <tr>
+          <th scope="row">small</th>
+          <td>${{prices.neapolitan_small_0_toppings}}</td>
+          <td>${{prices.neapolitan_small_1_toppings}}</td>
+          <td>${{prices.neapolitan_small_2_toppings}}</td>
+          <td>${{prices.neapolitan_small_3_toppings}}</td>
+          <td>${{prices.neapolitan_small_4_toppings}}</td>
+        </tr>
+        <tr>
+          <th scope="row">large</th>
+          <td>${{prices.neapolitan_large_0_toppings}}</td>
+          <td>${{prices.neapolitan_large_1_toppings}}</td>
+          <td>${{prices.neapolitan_large_2_toppings}}</td>
+          <td>${{prices.neapolitan_large_3_toppings}}</td>
+          <td>${{prices.neapolitan_large_4_toppings}}</td>
+        </tr>
+
+        <tr>
+          <td colspan="6" class="text-center align-bottom">Sicilian pizza (thick and tray-shaped)</td>
+        </tr>
+        <tr>
+          <th scope="row">small</th>
+          <td>${{prices.sicilian_small_0_toppings}}</td>
+          <td>${{prices.sicilian_small_1_toppings}}</td>
+          <td>${{prices.sicilian_small_2_toppings}}</td>
+          <td>${{prices.sicilian_small_3_toppings}}</td>
+          <td>${{prices.sicilian_small_4_toppings}}</td>
+        </tr>
+        <tr>
+          <th scope="row">large</th>
+          <td>${{prices.sicilian_large_0_toppings}}</td>
+          <td>${{prices.sicilian_large_1_toppings}}</td>
+          <td>${{prices.sicilian_large_2_toppings}}</td>
+          <td>${{prices.sicilian_large_3_toppings}}</td>
+          <td>${{prices.sicilian_large_4_toppings}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  
+</div>
+
+{% endblock %}

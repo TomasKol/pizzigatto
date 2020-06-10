@@ -1,0 +1,127 @@
+{% extends 'menu/manage_menu_items.html' %}
+{% load static %}
+
+{% block menu_item_forms %}
+  <form class="row d-flex justify-content-between align-items-center" action="{% url 'menu:add_menu_item' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3 class="col-3 text-center">add new {{ meal_type }}</h3>
+    <div class="col-4">
+      <p>name: {{ add_form.name }}</p>
+      <p>image: {{ add_form.image }}</p>
+    </div>
+    
+    <div class="col-2">
+      {% if meal_type.size_variant == 'single' %}
+      <p>price: {{ add_form.price_single }}</p>
+      {% else %}
+      <p>price small: {{ add_form.price_small }}</p>
+      <p>price large: {{ add_form.price_large }}</p>
+      {% endif %}
+    </div>
+    
+    <div class="col-3">
+      <div class="d-flex flex-column align-items-center">
+        <p>{{ add_form.is_available.label_tag }} {{ add_form.is_available }}</p>
+        <button type="submit" class="btn btn-outline-info btn-block">add {{ meal_type }}</button>
+      </div>
+    </div>
+
+    <input type="hidden" name="type_id" value="{{ meal_type.id }}">
+
+    {% if form.errors %}
+    {% for error in form.errors %}
+    <div class="alert alert-danger">
+      {{ form.errors.name }}
+      {{ form.errors.is_available }}
+      {{ form.errors.price_single }}
+      {{ form.errors.price_small }}
+      {{ form.errors.price_large }}
+      {{ form.errors.image }}
+      {{ form.non_field_errors }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+  </form>
+  <hr>
+
+  <form action="{% url 'menu:edit_menu_item' %}" method="POST" id="edit-item-formset" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% if integrity_error %}
+    <div class="alert alert-danger">
+      {{ integrity_error }}
+    </div>
+    {% endif %}
+
+    {% for form in formset %}
+      <div class="row d-flex justify-content-between align-items-center" id="edit-item-{{ form.id.value }}-form">
+        
+        <div class="col-3">
+          <img src="/media/{{form.initial.image}}" alt="picture of item" class="item-picture">
+        </div>
+        
+        <div class="col-6">
+          <h3>{{ form.name.value }}</h3>
+          <div class="row d-flex justify-content-between align-items-bottom">
+            <div class="col-8">
+              <p>name: {{ form.name }}</p>
+              <p>image: {{ form.image }}</p>
+            </div>
+            
+            <div class="col-4">
+              {% if meal_type.size_variant == 'single' %}
+              <p>price: {{ form.price_single }}</p>
+              {% else %}
+              <p>price small: {{ form.price_small }}</p>
+              <p>price large: {{ form.price_large }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="col-3">
+          <div class="d-flex flex-column align-items-center">
+            <p>{{form.is_available.label_tag}} {{ form.is_available }}</p>
+            <button type="submit" class="btn btn-outline-info btn-block" name="" id=""><b>save</b> all changes</button>
+            <button 
+              type="button"
+              class="delete-menu-item-button btn btn-outline-danger btn-block"
+              data-id="{{ form.id.value }}"
+              data-name="{{ form.name.value }}"
+              data-url="{% url 'menu:delete_menu_item' %}"
+              data-redirect="{% url 'menu:get_editable_menu_items' type_id=meal_type.id err=0 %}">
+              <b>delete</b> {{ form.name.value }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      {% if form.errors %}
+      {% for error in form.errors %}
+      <div class="alert alert-danger">
+        {{ form.errors.name }}
+        {{ form.errors.is_available }}
+        {{ form.errors.price_single }}
+        {{ form.errors.price_small }}
+        {{ form.errors.price_large }}
+        {{ form.errors.image }}
+        {{ form.non_field_errors }}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      {{ form.id }}
+      <hr>
+    {% endfor %}
+    <input type="hidden" name="type_id" value="{{ meal_type.id }}">
+  </form>
+
+  <form id="get-token" hidden>
+    {% csrf_token %}
+  </form>
+  
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>my cart</h1>
+  <div id="cart-container">
+    
+    {% if cart %}
+
+    <ul>
+    {% for item in cart %}
+
+      <li id="cart-item-{{item.id}}"  data-amount_at_load="{{item.amount}}" class="row d-flex justify-content-between align-items-center cart-item my-2 pb-2">
+        
+        <!-- item description -->
+        <div class="col-6">
+          <span class="text-capitalize">
+            {% if not item.menu_item.meal_type.size_variant == 'single' %}
+              {{ item.size }}
+            {% endif %}
+
+            {% if item.menu_item.meal_type.name %}
+              {{ item.menu_item.meal_type.name }}
+            {% else %}  
+              {{ item.pizza_form }}
+            {% endif %}
+          </span>
+          <span class="font-weight-bold text-capitalize">
+            {% if not item.pizza_form == 'not pizza' %}
+              with {{ item.name }}
+            {% else %}
+              {{ item.name }}
+            {% endif %}
+          </span>
+
+        </div>
+        
+        <!-- amount and prices -->
+        <div class="col-3">
+          <div class="row d-flex justify-content-between">
+            <p class="col-4 text-right">${{ item.price_unit }}</p>
+            <p class="col-4 text-right amount">{{ item.amount }}x</p>
+            <p class="col-4 text-right font-weight-bold price-for-amount">${{ item.price_total }}</p>
+          </div>
+        </div>
+
+        <!-- buttons -->
+        <div class="col-3 pb-2">
+          <div class="row d-flex justify-content-around align-items-center">
+
+            <!-- + / - buttons -->
+            <div class="col-6">
+              <form class="row d-flex justify-content-end align-items-center" id="form-plus-amount-{{item.id}}" data-url=" {% url 'orders:change_amount' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{item.id}}">
+
+                <!-- plus button -->
+                <button class="col-6 btn btn-outline-info change-amount-button button-short" type="button" data-direction="1" data-id="{{item.id}}">
+                  <i data-feather="plus"></i>
+                </button>
+
+                <!-- minus button -->
+                <button class="col-6 btn btn-outline-info change-amount-button button-short" disabled id="minus-{{item.id}}-button" type="button" data-direction="-1" data-id="{{item.id}}">
+                  <i data-feather="minus"></i>
+                </button>
+              </form>
+            </div>
+
+            <!-- x button -->
+            <div class="col-6">
+              <form class="justify-content-start align-items-center" id="form-delete-item-{{item.id}}" data-url="{% url 'orders:delete_cart_item' %}">
+                {% csrf_token %}
+                <input type="text" name="id" value="{{item.id}}" hidden>
+                <button class="btn btn-outline-danger delete-from-cart-button button-short" type="button" data-id="{{item.id}}">
+                  <i data-feather="x"></i>
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </li>
+
+    {% endfor %}
+
+      <!-- cart total and place order button -->
+      <li class="row d-flex justify-content-start ">
+        <p id="cart-total-label" class="col-2 text-right">cart total: </p>
+        <p id="cart-total-price" class="col-1 font-weight-bold">${{ totalPrice }}</p>
+        <div class="col-2">
+          <form id="place-order-form" data-url="{% url 'orders:place_order' %}">
+            {% csrf_token %}
+            <a href="{% url 'orders:place_order' %}"  class="btn btn-outline-info">Place order</a>
+          </form>
+        </div>
+
+      </li>
+
+    </ul>
+
+    {% else %}
+      <p>your cart is empty</p>
+
+    {% endif %}
+
+  </div>
+
+{% endblock %}

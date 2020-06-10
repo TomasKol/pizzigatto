@@ -1,0 +1,27 @@
+{% extends 'menu/menu_manager.html' %}
+{% load static %}
+
+{% block types_navbar %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'menu:get_editable_toppings' %}">
+      toppings
+    </a>
+  </li>
+  {% for type in types %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'menu:get_editable_menu_items' type_id=type.id err=0 %}">
+      {{ type.name }}
+    </a>
+  </li>
+  {% endfor %}
+{% endblock %}
+
+
+{% block menu_manager %}
+  <div id="manage-menu-items-container">
+    <div id="manage-menu-edit-items-content">
+      {% block menu_item_forms %}
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}

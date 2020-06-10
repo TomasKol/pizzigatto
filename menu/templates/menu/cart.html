@@ -1,0 +1,29 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+  
+{% block content %}
+  
+  <!-- shopping cart -->
+  <div id="cart-side">
+    
+    <div id="cart-header" class="row">
+      <h3 class="col">Shopping cart</h3>
+      <p class="col" id="cart-minimize">X</p>
+    </div>
+    
+    <div id="cart-items" class="scrollable"></div>
+    
+    <div id="cart-footer">
+      <div id="cart-total" class="gridded gridded-two-even">
+        <p id="cart-total-word">TOTAL</p>
+        <p id="cart-total-amount"></p>
+      </div>
+      <div id="cart-buttons" class="gridded gridded-two-even">
+        <p id="cart-order">order</p>
+        <p id="cart-empty">empty</p>
+      </div>
+    </div>
+  
+  </div>
+
+{% endblock %}
